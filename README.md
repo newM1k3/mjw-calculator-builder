@@ -10,146 +10,143 @@
 
 # MJW Calculator Builder
 
-A premium no-code calculator builder for creating, configuring, and previewing custom calculators with dynamic input fields and formula evaluation. Design multi-input calculators with real-time preview, optional **Supabase cloud persistence**, and a clean builder interface — all without writing calculation logic by hand.
+A browser-based drag-and-drop calculator construction tool. It lets users design, configure, and preview custom calculators by composing input fields and formulas — with optional **Supabase cloud persistence** for saving and loading calculator definitions.
 
 ## Screenshots
 
-| Builder Panel | Live Calculator Preview |
+| Builder Interface | Live Calculator Preview |
 | :---- | :---- |
-| ![MJW Calculator Builder builder panel — placeholder](screenshots/builder-panel-placeholder.png) | ![MJW Calculator Builder live preview — placeholder](screenshots/calculator-preview-placeholder.png) |
+| ![MJW Calculator Builder builder panel — placeholder](screenshots/builder-panel.png) | ![MJW Calculator Builder live preview — placeholder](screenshots/calculator-preview.png) |
 
 ## What It Does
 
-Unlike raw spreadsheet tooling or embedded iframe calculators, this builder uses a structured field-and-formula approach that produces shareable, embeddable calculators from a visual interface.
+Unlike static spreadsheets or embedded iframe widgets, this tool gives non-developers a structured UI for assembling calculators from typed input fields and formula logic — then previewing the result in real time.
 
 | Component | Role |
 | :---- | :---- |
-| **Builder Panel** | Add, remove, and configure input fields and the output formula |
-| **Input Field Editor** | Set field labels, types, default values, min/max constraints, and variable names |
-| **Calculator Preview** | Live interactive render of the calculator as an end user would see it |
-| **Formula Evaluator** | Safe runtime evaluation of user-defined output formulas referencing field variables |
-| **Header** | Global actions — save, load, reset, and calculator metadata |
+| **Builder Panel** | Compose and reorder input fields, set labels, types, and default values |
+| **Input Field Editor** | Configure individual field properties including name, type, placeholder, and constraints |
+| **Calculator Preview** | Live-rendered calculator that evaluates the configured formula against current field values |
+| **Formula Evaluator** | Safe expression engine that resolves field references and computes output values |
+| **Header** | App navigation, save/load controls, and optional Supabase session state |
 
 **Key interactions:**
 
-- Add numeric, range-slider, or select input fields to the calculator definition.
-- Assign a short variable name to each field for use in the output formula.
-- Write a formula referencing field variables to define what the calculator outputs.
-- See the output update in real time inside the Calculator Preview as inputs change.
-- Save and load calculator configurations, optionally persisted to Supabase.
+- Add, reorder, and remove input fields from the builder panel.
+- Configure each field's label, type, default value, and constraints via the field editor.
+- Define a formula that references field names and see the result update live in the preview.
+- Save calculator definitions to Supabase or export them for reuse.
+- Load previously saved calculators from cloud storage when Supabase is configured.
 
 ## How to Use
 
-The app opens with an empty builder ready for a new calculator. Start by adding input fields in the Builder Panel and giving each field a variable name. Write an output formula in the formula editor that references those variable names. Switch to the Calculator Preview to interact with the calculator as a user would — adjusting inputs and confirming the output evaluates correctly. Save the definition locally or to Supabase when the configuration is complete.
-
-The interface is designed for desktop use where the split builder-and-preview layout gives the most value, though the panels are responsive enough for review on smaller screens.
+Open the builder and add input fields using the builder panel controls. Give each field a descriptive name that can be referenced in the formula expression. Write a formula in the formula input area using field names as variables. The calculator preview updates in real time as you change field values or modify the formula. Save the calculator definition when it is ready to share or reuse. Without Supabase configured, the builder operates fully in-browser.
 
 ## Stack
 
 | Layer | Technology |
 | :---- | :---- |
-| UI framework | React 18 \+ TypeScript |
+| UI framework | React 18 + TypeScript |
 | Build tool | Vite 5 |
 | Styling | Tailwind CSS 3 |
 | Icons | Lucide React |
-| Formula evaluation | Custom `formulaEvaluator` utility |
 | Optional cloud persistence | Supabase |
 | Hosting | — |
 
 ## Local Development
 
+```
 npm install
+```
 
+```
 npm run dev
+```
 
-The app works fully with **no environment variables**. Without Supabase variables configured, it runs as a local browser-only tool where calculator definitions can be built, previewed, and managed entirely in-session.
+The app works fully with **no environment variables**. Without Supabase variables configured, it runs as a local browser-only tool where calculator definitions can be built and previewed without cloud saves.
 
 ## Quality Checks
 
+```
 npm run typecheck
+```
 
+```
 npm run lint
+```
 
+```
 npm run build
+```
 
 ## Available Scripts
 
-npm run dev        \# Start development server (http://localhost:5173)
-
-npm run build      \# Production build → dist/
-
-npm run preview    \# Preview production build locally
-
-npm run lint       \# ESLint check
-
-npm run typecheck  \# TypeScript type check (no emit)
+```
+npm run dev        # Start development server (http://localhost:5173)
+npm run build      # Production build → dist/
+npm run preview    # Preview production build locally
+npm run lint       # ESLint check
+npm run typecheck  # TypeScript type check (no emit)
+```
 
 ## Environment Variables
 
-All environment variables are optional unless you enable Supabase cloud persistence. The app is fully usable in local-only mode with no configured variables.
+All environment variables are optional unless you enable Supabase cloud persistence. The app remains fully usable in local-only mode with no configured variables.
 
 | Variable | Required? | Scope | Enables | Description |
 | :---- | :---- | :---- | :---- | :---- |
-| `VITE_SUPABASE_URL` | Optional | Frontend/public | Supabase cloud save and load | Public Supabase project URL. Example: `https://your-project.supabase.co`. |
-| `VITE_SUPABASE_ANON_KEY` | Optional | Frontend/public | Supabase authenticated requests | Public anonymous key for the Supabase project. Safe to expose in frontend code as configured by Supabase row-level security. |
+| `VITE_SUPABASE_URL` | Optional | Frontend/public | Supabase cloud save and load | Public Supabase project URL. Example: `https://your-project-id.supabase.co`. |
+| `VITE_SUPABASE_ANON_KEY` | Optional | Frontend/public | Supabase authenticated requests | Public anon key from your Supabase project's API settings. Safe to expose in frontend code. |
 
 ## Supabase Cloud Persistence
 
-The app works fully without Supabase. In local-only mode, calculator configurations exist for the duration of the session and can be exported or reconstructed manually.
+The app works fully with **no environment variables**. In local-only mode, calculator definitions exist only in the current browser session; users can still build, edit, and preview calculators entirely in-browser.
 
-When `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` are configured, the app can save and load calculator definitions to a Supabase table. Row-level security should be configured on the Supabase project so users can only read and write their own records.
+Cloud persistence is optional. When `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` are configured, the header controls expose save and load actions that read and write calculator records to Supabase. Standard row-level security policies should be applied to the relevant table to scope records to authenticated users.
 
 ### Recommended `calculators` Table
 
-Create a Supabase table named `calculators`. The current implementation expects the following columns.
+Create a Supabase table named `calculators`. The implementation expects the following fields.
 
-| Column | Type | Notes |
+| Field | Type | Notes |
 | :---- | :---- | :---- |
 | `id` | uuid | Primary key, generated by default. |
-| `title` | text | Display name for the calculator. |
-| `description` | text | Optional summary of the calculator's purpose. |
-| `fields` | jsonb | Array of input field definitions including labels, types, variable names, and constraints. |
-| `formula` | text | Output formula string referencing field variable names. |
-| `created_at` | timestamptz | Managed by Supabase. |
-| `updated_at` | timestamptz | Updated on each save to support conflict detection. |
+| `title` | text | Display name for the saved calculator. |
+| `fields` | jsonb | Array of input field definitions. |
+| `formula` | text | The formula expression string. |
+| `owner` | uuid | References `auth.users.id` for row-level security. |
+| `created_at` | timestamptz | Managed by Supabase, set on insert. |
+| `updated_at` | timestamptz | Updated on each save for conflict awareness. |
 
-Recommended row-level security policies should allow authenticated users to insert, select, update, and delete only their own rows. A typical policy condition is `auth.uid() = user_id` on each operation. Add a `user_id` uuid column referencing `auth.users` and populate it on insert.
+Recommended row-level security policies should allow authenticated users to insert records for themselves and only select, update, or delete their own records. A practical policy pattern is `auth.uid() = owner` for all user-scoped operations.
 
 ## Project Structure
 
+```
 src/
-
   components/
-
-    BuilderPanel.tsx          \# Input field list, formula editor, and add/remove controls
-
-    CalculatorPreview.tsx     \# Live interactive calculator render for end-user testing
-
-    Header.tsx                \# Global toolbar — title, save, load, reset actions
-
-    InputFieldEditor.tsx      \# Per-field configuration: label, type, variable name, constraints
-
+    BuilderPanel.tsx        # Field list management and formula input
+    CalculatorPreview.tsx   # Live-rendered calculator output
+    Header.tsx              # App navigation and save/load controls
+    InputFieldEditor.tsx    # Per-field configuration editor
   types/
-
-    calculator.ts             \# Shared types for calculator definitions, fields, and formulas
-
+    calculator.ts           # Shared calculator and field type definitions
   utils/
-
-    formulaEvaluator.ts       \# Safe runtime formula evaluation against field variable values
-
-  App.tsx                     \# Root layout — builder/preview split and state management
-
-  main.tsx                    \# Entry point
+    formulaEvaluator.ts     # Safe formula expression evaluator
+  App.tsx                   # Root layout and state management
+  main.tsx                  # Entry point
+  index.css                 # Global styles
+```
 
 ## Changelog
 
 ### v0.0.0 — Initial Build
 
-- Implemented Builder Panel with dynamic input field add/remove and formula editor.
-- Implemented Input Field Editor supporting numeric, range, and select field types with variable name binding.
-- Implemented live Calculator Preview with real-time formula evaluation via the custom `formulaEvaluator` utility.
-- Added optional Supabase integration for cloud persistence of calculator definitions.
-- Configured Vite 5, React 18, TypeScript, and Tailwind CSS project scaffold.
+- Implemented builder panel with add, reorder, and remove support for input fields.
+- Implemented per-field editor for label, type, default value, and constraint configuration.
+- Implemented live calculator preview with real-time formula evaluation.
+- Implemented formula evaluator utility with named field variable resolution.
+- Added optional Supabase client wiring for cloud save and load of calculator definitions.
 
 ---
 
