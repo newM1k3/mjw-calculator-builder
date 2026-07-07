@@ -1,0 +1,156 @@
+<div align="center">
+
+![MJW Design](https://mjwdesign.ca/wp-content/uploads/2024/01/mjw-design-logo.png)
+
+**Built with [MJW Design](https://mjwdesign.ca) — AI-Powered Development**
+
+---
+
+</div>
+
+# MJW Calculator Builder
+
+A premium no-code calculator builder for creating, configuring, and previewing custom calculators with dynamic input fields and formula evaluation. Design multi-input calculators with real-time preview, optional **Supabase cloud persistence**, and a clean builder interface — all without writing calculation logic by hand.
+
+## Screenshots
+
+| Builder Panel | Live Calculator Preview |
+| :---- | :---- |
+| ![MJW Calculator Builder builder panel — placeholder](screenshots/builder-panel-placeholder.png) | ![MJW Calculator Builder live preview — placeholder](screenshots/calculator-preview-placeholder.png) |
+
+## What It Does
+
+Unlike raw spreadsheet tooling or embedded iframe calculators, this builder uses a structured field-and-formula approach that produces shareable, embeddable calculators from a visual interface.
+
+| Component | Role |
+| :---- | :---- |
+| **Builder Panel** | Add, remove, and configure input fields and the output formula |
+| **Input Field Editor** | Set field labels, types, default values, min/max constraints, and variable names |
+| **Calculator Preview** | Live interactive render of the calculator as an end user would see it |
+| **Formula Evaluator** | Safe runtime evaluation of user-defined output formulas referencing field variables |
+| **Header** | Global actions — save, load, reset, and calculator metadata |
+
+**Key interactions:**
+
+- Add numeric, range-slider, or select input fields to the calculator definition.
+- Assign a short variable name to each field for use in the output formula.
+- Write a formula referencing field variables to define what the calculator outputs.
+- See the output update in real time inside the Calculator Preview as inputs change.
+- Save and load calculator configurations, optionally persisted to Supabase.
+
+## How to Use
+
+The app opens with an empty builder ready for a new calculator. Start by adding input fields in the Builder Panel and giving each field a variable name. Write an output formula in the formula editor that references those variable names. Switch to the Calculator Preview to interact with the calculator as a user would — adjusting inputs and confirming the output evaluates correctly. Save the definition locally or to Supabase when the configuration is complete.
+
+The interface is designed for desktop use where the split builder-and-preview layout gives the most value, though the panels are responsive enough for review on smaller screens.
+
+## Stack
+
+| Layer | Technology |
+| :---- | :---- |
+| UI framework | React 18 \+ TypeScript |
+| Build tool | Vite 5 |
+| Styling | Tailwind CSS 3 |
+| Icons | Lucide React |
+| Formula evaluation | Custom `formulaEvaluator` utility |
+| Optional cloud persistence | Supabase |
+| Hosting | — |
+
+## Local Development
+
+npm install
+
+npm run dev
+
+The app works fully with **no environment variables**. Without Supabase variables configured, it runs as a local browser-only tool where calculator definitions can be built, previewed, and managed entirely in-session.
+
+## Quality Checks
+
+npm run typecheck
+
+npm run lint
+
+npm run build
+
+## Available Scripts
+
+npm run dev        \# Start development server (http://localhost:5173)
+
+npm run build      \# Production build → dist/
+
+npm run preview    \# Preview production build locally
+
+npm run lint       \# ESLint check
+
+npm run typecheck  \# TypeScript type check (no emit)
+
+## Environment Variables
+
+All environment variables are optional unless you enable Supabase cloud persistence. The app is fully usable in local-only mode with no configured variables.
+
+| Variable | Required? | Scope | Enables | Description |
+| :---- | :---- | :---- | :---- | :---- |
+| `VITE_SUPABASE_URL` | Optional | Frontend/public | Supabase cloud save and load | Public Supabase project URL. Example: `https://your-project.supabase.co`. |
+| `VITE_SUPABASE_ANON_KEY` | Optional | Frontend/public | Supabase authenticated requests | Public anonymous key for the Supabase project. Safe to expose in frontend code as configured by Supabase row-level security. |
+
+## Supabase Cloud Persistence
+
+The app works fully without Supabase. In local-only mode, calculator configurations exist for the duration of the session and can be exported or reconstructed manually.
+
+When `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` are configured, the app can save and load calculator definitions to a Supabase table. Row-level security should be configured on the Supabase project so users can only read and write their own records.
+
+### Recommended `calculators` Table
+
+Create a Supabase table named `calculators`. The current implementation expects the following columns.
+
+| Column | Type | Notes |
+| :---- | :---- | :---- |
+| `id` | uuid | Primary key, generated by default. |
+| `title` | text | Display name for the calculator. |
+| `description` | text | Optional summary of the calculator's purpose. |
+| `fields` | jsonb | Array of input field definitions including labels, types, variable names, and constraints. |
+| `formula` | text | Output formula string referencing field variable names. |
+| `created_at` | timestamptz | Managed by Supabase. |
+| `updated_at` | timestamptz | Updated on each save to support conflict detection. |
+
+Recommended row-level security policies should allow authenticated users to insert, select, update, and delete only their own rows. A typical policy condition is `auth.uid() = user_id` on each operation. Add a `user_id` uuid column referencing `auth.users` and populate it on insert.
+
+## Project Structure
+
+src/
+
+  components/
+
+    BuilderPanel.tsx          \# Input field list, formula editor, and add/remove controls
+
+    CalculatorPreview.tsx     \# Live interactive calculator render for end-user testing
+
+    Header.tsx                \# Global toolbar — title, save, load, reset actions
+
+    InputFieldEditor.tsx      \# Per-field configuration: label, type, variable name, constraints
+
+  types/
+
+    calculator.ts             \# Shared types for calculator definitions, fields, and formulas
+
+  utils/
+
+    formulaEvaluator.ts       \# Safe runtime formula evaluation against field variable values
+
+  App.tsx                     \# Root layout — builder/preview split and state management
+
+  main.tsx                    \# Entry point
+
+## Changelog
+
+### v0.0.0 — Initial Build
+
+- Implemented Builder Panel with dynamic input field add/remove and formula editor.
+- Implemented Input Field Editor supporting numeric, range, and select field types with variable name binding.
+- Implemented live Calculator Preview with real-time formula evaluation via the custom `formulaEvaluator` utility.
+- Added optional Supabase integration for cloud persistence of calculator definitions.
+- Configured Vite 5, React 18, TypeScript, and Tailwind CSS project scaffold.
+
+---
+
+Part of the **MJW Personal App Platform**.
