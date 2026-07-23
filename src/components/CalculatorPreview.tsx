@@ -138,7 +138,7 @@ export function CalculatorPreview({
               <div className="text-sm font-medium text-indigo-900 mb-2">
                 {resultLabel || 'Result'}
               </div>
-              {result !== null ? (
+              {result != null ? (
                 <div className="text-3xl font-bold text-indigo-600">
                   {result.toLocaleString(undefined, {
                     minimumFractionDigits: 0,
